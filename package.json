@@ -1,0 +1,14 @@
+{
+  "name": "phaser2_ninepatch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start": "parcel index.html -p 8080"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^3.5.2"
+  }
+}
