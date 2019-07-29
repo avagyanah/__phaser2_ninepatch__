@@ -1,4 +1,4 @@
-export class NinePatch extends PIXI.DisplayObjectContainer {
+export class NinePatch2 extends Phaser.Image {
   // eslint-disable-next-line class-methods-use-this
   public update() {}
 
@@ -9,7 +9,7 @@ export class NinePatch extends PIXI.DisplayObjectContainer {
     const { frame, width, height, data } = config;
     const { top: t, bottom: b, left: l, right: r } = data;
 
-    super();
+    super(game);
 
     this.game = game;
     this._parts = {};
@@ -58,7 +58,7 @@ export class NinePatch extends PIXI.DisplayObjectContainer {
     const rightBottom = this.getImage();
     rightBottom.crop(rightBottomArea);
 
-    // RIGHT BOTTOM
+    // CENTER
     const centerArea = this.getArea(l, t, w - (l + r), h - (t + b));
     const center = this.getImage();
     center.crop(centerArea);
@@ -74,13 +74,18 @@ export class NinePatch extends PIXI.DisplayObjectContainer {
     this.addChild((this._parts.center = center));
 
     this.resize(width, height);
-    this._testMovement();
   }
 
   resize(width, height) {
     this._config.width = width;
     this._config.height = height;
 
+    this._scaleParts();
+    this._positionParts();
+    // this._centralize();
+  }
+
+  _scaleParts() {
     const { width: w, height: h, data } = this._config;
     const { top: t, bottom: b, left: l, right: r } = data;
     const { top, bottom, left, right, center } = this._parts;
@@ -94,9 +99,6 @@ export class NinePatch extends PIXI.DisplayObjectContainer {
     right.scale.y *= sy;
     left.scale.y *= sy;
     center.scale.y *= sy;
-
-    this._positionParts();
-    this._centralize();
   }
 
   _positionParts() {
@@ -121,20 +123,9 @@ export class NinePatch extends PIXI.DisplayObjectContainer {
     this.pivot.set(w / 2, h / 2);
   }
 
-  _testMovement() {
-    this.game.add.tween(this).to({ rotation: 2 * Math.PI }, 3000, null, true, 0, -1);
-    this.game.add.tween(this.scale).to({ x: 2, y: 2 }, 1000, null, true, 0, -1, true);
-
-    const tweenData = { a: 196, b: 196 };
-    const tween = this.game.add.tween(tweenData).to({ a: 300, b: 300 }, 1000, null, true, 0, -1, true);
-    tween.onUpdateCallback((tween, progress, tweenData) => {
-      const { a, b } = tween.target;
-      this.resize(a, b);
-    });
-  }
-
   getImage() {
-    return this.game.add.image(0, 0, this._config.frame);
+    const img = this.game.add.image(0, 0, this._config.frame);
+    return img;
   }
 
   getArea(x, y, width, height) {
